@@ -69,7 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             
-            if (Router.currentRoute === 'login') {
+            // Always navigate to admin if no route is set or if on login page
+            if (!Router.currentRoute || Router.currentRoute === 'login') {
                 Router.navigate('admin');
             }
         } else {

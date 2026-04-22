@@ -1,0 +1,17 @@
+{
+  "name": "Yousaf Brothers Boss Panel",
+  "short_name": "YB Boss",
+  "description": "Boss Dashboard for Yousaf Brothers",
+  "start_url": "/?pwa=true",
+  "display": "standalone",
+  "background_color": "#1e3c72",
+  "theme_color": "#1e3c72",
+  "icons": [
+    {
+      "src": "assets/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

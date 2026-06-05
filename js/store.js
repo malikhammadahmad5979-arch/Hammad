@@ -24,10 +24,11 @@ const saveLocalDB = (data) => {
 
     if (_syncTimeout) clearTimeout(_syncTimeout);
     if (auth.currentUser) {
+        // Increased to 4000ms to reduce Firestore write frequency
         _syncTimeout = setTimeout(() => {
             setDoc(doc(db, "business_data", auth.currentUser.uid), data)
                 .catch(err => console.error("Cloud sync failed", err));
-        }, 1500);
+        }, 4000);
     }
 };
 
@@ -79,15 +80,27 @@ export const syncLocalToCloud = async () => {
 };
 
 // ─── Live Sync Listener ───────────────────────────────────────────────────────
+let _lastRenderTime = 0;
+
 export const initCloudSync = (onUpdate) => {
     if (!auth.currentUser) return;
     const docRef = doc(db, "business_data", auth.currentUser.uid);
+    let _isFirstSnapshot = true; // skip the first snapshot (already synced on login)
     onSnapshot(docRef, (docSnap) => {
         if (docSnap.exists()) {
+            // Skip first snapshot — data was already loaded in syncLocalToCloud
+            if (_isFirstSnapshot) { _isFirstSnapshot = false; return; }
+
             const data = docSnap.data();
             _memCache = data;
             localStorage.setItem('yb_db', JSON.stringify(data));
-            if (onUpdate) onUpdate();
+
+            // Throttle UI re-renders to max once every 5 seconds
+            const now = Date.now();
+            if (onUpdate && (now - _lastRenderTime > 5000)) {
+                _lastRenderTime = now;
+                onUpdate();
+            }
         }
     });
 };

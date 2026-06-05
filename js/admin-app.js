@@ -7,6 +7,7 @@ import { renderAdmin } from './views/admin.js';
 import { renderLogin } from './views/login.js';
 import { renderInvoice } from './views/invoice.js';
 import { renderSettings } from './views/settings.js';
+import { renderLoanManagement } from './views/loanManagement.js';
 import { renderSentPayments } from './views/sentPayments.js';
 
 // Setup Mock DB

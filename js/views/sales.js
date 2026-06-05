@@ -111,7 +111,7 @@ export const renderSales = () => {
                         </div>
                         <div>
                             <label style="font-size: 13px; font-weight: 700; color: #0284c7;">Total (Paimaish)</label>
-                            <input type="number" id="calc-total" readonly style="width: 100%; padding: 6px; border: 1px solid #0ea5e9; background: #e0f2fe; border-radius: 4px; font-weight: bold; color: #0369a1;" placeholder="0">
+                            <input type="number" id="calc-total" step="0.01" style="width: 100%; padding: 6px; border: 2px solid #0ea5e9; background: #ffffff; border-radius: 4px; font-weight: bold; color: #0369a1;" placeholder="0">
                         </div>
                     </div>
                     
@@ -283,14 +283,28 @@ export const renderSales = () => {
                 total.value = result;
                 weightInput.value = result; 
                 calculateTotalAmount();
-            } else {
-                total.value = '';
             }
         };
 
         if(len) len.addEventListener('input', calculatePaimaish);
         if(wid) wid.addEventListener('input', calculatePaimaish);
         if(dep) dep.addEventListener('input', calculatePaimaish);
+
+        if(total) {
+            total.addEventListener('input', () => {
+                const val = parseFloat(total.value) || 0;
+                weightInput.value = val > 0 ? val : '';
+                calculateTotalAmount();
+            });
+        }
+
+        if(weightInput) {
+            weightInput.addEventListener('input', () => {
+                const val = parseFloat(weightInput.value) || 0;
+                total.value = val > 0 ? val : '';
+                calculateTotalAmount();
+            });
+        }
 
         let editingSaleId = null;
 

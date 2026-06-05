@@ -7,7 +7,7 @@ import { renderAdmin } from './views/admin.js';
 import { renderLogin } from './views/login.js';
 import { renderInvoice } from './views/invoice.js';
 import { renderSettings } from './views/settings.js';
-import { renderLoanManagement } from './views/loanManagement.js';
+import { renderSentPayments } from './views/sentPayments.js';
 
 // Setup Mock DB
 DB.init();
@@ -34,6 +34,10 @@ const getAdminSidebarHtml = (user) => {
         <a class="nav-item" data-route="invoice" onclick="window.router.navigate('invoice')">
             <i class="ri-file-chart-line"></i> Business Reports
         </a>
+            <a class="nav-item" data-route="sent-payments" onclick="window.router.navigate('sent-payments')">
+                <i class="ri-arrow-up-circle-line"></i> Sent Payments (Bheji Raqam)
+            </a>
+
         <a class="nav-item" data-route="loan-management" onclick="window.router.navigate('loan-management')">
             <i class="ri-hand-coin-line"></i> Loan Management (Karza)
         </a>
@@ -48,7 +52,7 @@ const getAdminSidebarHtml = (user) => {
     `;
 };
 
-// Setup Router
+Router.add('sent-payments', renderSentPayments);
 Router.add('login', renderLogin);
 Router.add('admin', renderAdmin);
 Router.add('invoice', renderInvoice);

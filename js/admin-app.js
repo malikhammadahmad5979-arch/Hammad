@@ -7,6 +7,7 @@ import { renderAdmin } from './views/admin.js';
 import { renderLogin } from './views/login.js';
 import { renderInvoice } from './views/invoice.js';
 import { renderSettings } from './views/settings.js';
+import { renderLoanManagement } from './views/loanManagement.js';
 
 // Setup Mock DB
 DB.init();
@@ -30,8 +31,11 @@ const getAdminSidebarHtml = (user) => {
         <a class="nav-item active" data-route="admin" onclick="window.router.navigate('admin')">
             <i class="ri-dashboard-line"></i> Summary Dashboard
         </a>
-        <a class="nav-item" data-route="admin-reports" onclick="window.router.navigate('invoice')">
+        <a class="nav-item" data-route="invoice" onclick="window.router.navigate('invoice')">
             <i class="ri-file-chart-line"></i> Business Reports
+        </a>
+        <a class="nav-item" data-route="loan-management" onclick="window.router.navigate('loan-management')">
+            <i class="ri-hand-coin-line"></i> Loan Management (Karza)
         </a>
         <div style="margin-top: 50px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
             <a class="nav-item" data-route="settings" onclick="window.router.navigate('settings')">
@@ -49,6 +53,7 @@ Router.add('login', renderLogin);
 Router.add('admin', renderAdmin);
 Router.add('invoice', renderInvoice);
 Router.add('settings', renderSettings);
+Router.add('loan-management', renderLoanManagement);
 
 window.router = Router;
 

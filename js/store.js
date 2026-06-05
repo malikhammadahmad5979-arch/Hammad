@@ -43,7 +43,9 @@ const defaultData = () => ({
     payments: [],
     cashbook: [],
     outsideAccounts: [],
-    accountLedger: []
+    accountLedger: [],
+    loans: [],
+    loanTransactions: []
 });
 
 const initializeDB = () => {
@@ -271,6 +273,79 @@ export const DB = {
   // Helpers
   getClientTotalReceived: (clientId) => {
     return DB.getClientPayments(clientId).reduce((sum, p) => sum + p.amount, 0);
+  },
+
+  // Loans
+  getLoans: () => {
+    const d = getLocalDB();
+    if (!d.loans) d.loans = [];
+    return d.loans;
+  },
+  getLoanById: (id) => {
+    const d = getLocalDB();
+    if (!d.loans) d.loans = [];
+    return d.loans.find(l => l.id == id);
+  },
+  addLoan: (loan) => {
+    const d = getLocalDB();
+    if (!d.loans) d.loans = [];
+    if (!d.loanTransactions) d.loanTransactions = [];
+    loan.id = Date.now();
+    loan.balance = 0;
+    d.loans.push(loan);
+    saveLocalDB(d);
+    return loan;
+  },
+  deleteLoan: (id) => {
+    const d = getLocalDB();
+    if (!d.loans) d.loans = [];
+    if (!d.loanTransactions) d.loanTransactions = [];
+    d.loans = d.loans.filter(l => l.id != id);
+    d.loanTransactions = d.loanTransactions.filter(t => t.loanId != id);
+    saveLocalDB(d);
+  },
+  getLoanTransactions: (loanId) => {
+    const d = getLocalDB();
+    if (!d.loanTransactions) d.loanTransactions = [];
+    return d.loanTransactions.filter(t => t.loanId == loanId);
+  },
+  addLoanTransaction: (entry) => {
+    const d = getLocalDB();
+    if (!d.loans) d.loans = [];
+    if (!d.loanTransactions) d.loanTransactions = [];
+    entry.id = Date.now();
+    d.loanTransactions.push(entry);
+    const loan = d.loans.find(l => l.id == entry.loanId);
+    if (loan) {
+        const amt = parseFloat(entry.amount) || 0;
+        if (entry.type === 'borrow') {
+            loan.balance += amt;
+        } else if (entry.type === 'payback') {
+            loan.balance -= amt;
+        }
+    }
+    saveLocalDB(d);
+    return entry;
+  },
+  deleteLoanTransaction: (id) => {
+    const d = getLocalDB();
+    if (!d.loans) d.loans = [];
+    if (!d.loanTransactions) d.loanTransactions = [];
+    const idx = d.loanTransactions.findIndex(t => t.id == id);
+    if (idx !== -1) {
+        const entry = d.loanTransactions[idx];
+        const loan = d.loans.find(l => l.id == entry.loanId);
+        if (loan) {
+            const amt = parseFloat(entry.amount) || 0;
+            if (entry.type === 'borrow') {
+                loan.balance -= amt;
+            } else if (entry.type === 'payback') {
+                loan.balance += amt;
+            }
+        }
+        d.loanTransactions.splice(idx, 1);
+        saveLocalDB(d);
+    }
   },
 
   getDashboardStats: () => {
